@@ -83,6 +83,13 @@ export const routes = (
         })
       }
 
+      if (doctor.appointments_accepted.includes(existedAppointment.id)) {
+        return res.status(400).send({
+          reason: 'Invalid',
+          message: 'Appointment already accepted'
+        })
+      }
+
       const appointmentsOfThisDoctor = await appointmentsDatabase.find({ doctorId: doctor.id }).toArray();
 
       const appointmentsInSelectedDate = appointmentsOfThisDoctor.filter((appointment: WithId<IAppointment>) => {

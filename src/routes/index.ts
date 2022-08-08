@@ -1,5 +1,5 @@
 import express from 'express';
-import { CollectionInfo, MongoClient } from 'mongodb';
+import { MongoClient } from 'mongodb';
 import { config } from '../config';
 import * as doctor from './doctor';
 import * as patient from './patient';
@@ -16,14 +16,14 @@ export const Home = (
 
     const availableCollections: string[] = [];
 
-    await (await mongoClient
+    const collectionsDoc = await mongoClient
       .db(config.databases['hospital'].name)
       .listCollections()
-      .toArray()
-    ).forEach(
-      (doc: CollectionInfo | Pick<CollectionInfo, "name" | "type">) =>
-        availableCollections.push(doc.name)
-    );
+      .toArray();
+
+    for (const collection of collectionsDoc) {
+      availableCollections.push(collection.name)
+    }
     
     res.send({ availableCollections });
   });
